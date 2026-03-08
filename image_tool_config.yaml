@@ -1,0 +1,52 @@
+api_key: 96d739dd-5f53-4a6d-b89d-1779f27be846
+base_url: https://ark.cn-beijing.volces.com/api/coding/v3
+features:
+- condition: 小于
+  condition2: 大于
+  is_numeric: true
+  name: 计算主体占比
+  prompt: 产品主图占图片的比例，只回答数字1-100
+  threshold: '80'
+  threshold2: '60'
+- condition: 等于
+  condition2: ''
+  is_numeric: true
+  name: 是否有优惠标志
+  prompt: 是否有优惠标志有回1没有回2只回数值
+  threshold: '1'
+  threshold2: ''
+- condition: 大于
+  condition2: 小于
+  is_numeric: true
+  name: 主图对比度
+  prompt: 产品主图和背景的对比度差值，1-7级
+  threshold: '4.5'
+  threshold2: '8'
+- condition: ''
+  is_numeric: false
+  name: 提取主色调
+  prompt: 请提取这张图片的主要颜色，以十六进制RGB值表示，并描述每种颜色的占比和视觉效果。
+  threshold: ''
+- condition: 大于
+  condition2: 小于
+  is_numeric: true
+  name: 分析对比度
+  prompt: 请分析这张图片的对比度，
+  threshold: '4.5'
+  threshold2: '8'
+- condition: 小于
+  condition2: ''
+  is_numeric: true
+  name: 分享文案数量
+  prompt: 查看文案数量，主标题+各种副标题
+  threshold: '3'
+  threshold2: ''
+- condition: 小于
+  condition2: ''
+  is_numeric: false
+  name: 主标题是否在左上角
+  prompt: 主标题是否在左上角
+  threshold: '3'
+  threshold2: ''
+model: ark-code-latest
+suggestion_prompt: 根据数值给出图片优化建议
