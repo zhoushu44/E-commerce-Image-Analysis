@@ -13,6 +13,7 @@ a = Analysis(
         ('.streamlit/config.toml', './.streamlit/'),
         ('image_analyzer_v3.py', './'),
     ],
+
     hiddenimports=[
         'streamlit',
         'streamlit.runtime',
@@ -64,7 +65,7 @@ exe = EXE(
     upx=False,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
