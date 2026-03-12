@@ -29,4 +29,4 @@ jobs:
           context: .                # 构建上下文（Dockerfile 所在目录）
           file: ./Dockerfile        # 指定 Dockerfile 路径（默认根目录，可省略）
           push: true                # 开启推送（关键）
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-docker-demo:latest  # 镜像标签（用户名/镜像名:版本）
+          tags: ${{ secrets.DOCKER_USERNAME }}/ecommerce-image-analysis:latest  # 镜像标签（用户名/镜像名:版本）
