@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
+logs/
+*.log
+
+# Data
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+analysis_history.json
+image_tool_config.yaml
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+push-to-dockerhub.bat
+push-to-dockerhub.sh
+宝塔Docker部署完整指南.md
+
+# Temp
+*.tmp
+*.temp
+
+# Test
+test/
+tests/

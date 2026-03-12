@@ -44,6 +44,52 @@ streamlit run image_analyzer.py
 3. 点击 "开始分析" 按钮
 4. 查看分析结果和耗时
 
+## Docker 部署
+
+### 使用 Docker 运行（推荐）
+
+```bash
+# 从 Docker Hub 拉取镜像
+docker pull zhoushu1/ecommerce-image-analysis:latest
+
+# 运行容器
+docker run -d -p 8501:8501 \
+  -v /path/to/data:/app/data \
+  -v /path/to/logs:/app/logs \
+  --name image-analysis-app \
+  zhoushu1/ecommerce-image-analysis:latest
+```
+
+### 本地构建镜像
+
+```bash
+# 克隆项目
+git clone https://github.com/your-repo/e-commerce-image-analysis.git
+cd e-commerce-image-analysis
+
+# 构建 Docker 镜像
+docker build -t ecommerce-image-analysis:latest .
+
+# 运行容器
+docker run -d -p 8501:8501 \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/logs:/app/logs \
+  --name image-analysis-app \
+  ecommerce-image-analysis:latest
+```
+
+### 使用 Docker Compose（最简单）
+
+```bash
+# 启动服务
+docker-compose up -d
+
+# 停止服务
+docker-compose down
+```
+
+访问应用：http://localhost:8501
+
 ## 内置功能
 
 - **计算比例**：分析图片的宽高比例和具体像素值
