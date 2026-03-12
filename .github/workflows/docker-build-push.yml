@@ -1,0 +1,32 @@
+# 工作流名称
+name: Docker 自动构建并推送（无服务器版）
+
+# 触发条件：推送到 main 分支时执行
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-push:
+    # 运行环境：Ubuntu 最新版（自带 Docker）
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤1：检出 GitHub 仓库的代码（含 Dockerfile）
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      # 步骤2：登录 Docker Hub（用 Secrets 里的账号令牌）
+      - name: 登录 Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 步骤3：构建 Docker 镜像并推送到 Docker Hub
+      - name: 构建并推送镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: .                # 构建上下文（Dockerfile 所在目录）
+          file: ./Dockerfile        # 指定 Dockerfile 路径（默认根目录，可省略）
+          push: true                # 开启推送（关键）
+          tags: ${{ secrets.DOCKER_USERNAME }}/my-docker-demo:latest  # 镜像标签（用户名/镜像名:版本）
