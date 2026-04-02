@@ -658,10 +658,11 @@ def handle_select_all_change(section_key, features):
 
 
 def sync_select_all_state(section_key, features):
+    select_all_key = f"{section_key}_select_all"
     if not features:
-        st.session_state[f"{section_key}_select_all"] = False
+        st.session_state[select_all_key] = False
         return
-    st.session_state[f"{section_key}_select_all"] = all(
+    st.session_state[select_all_key] = all(
         st.session_state.get(f"{section_key}_feature_{index}", False) for index in range(len(features))
     )
 
@@ -672,8 +673,11 @@ def render_feature_selector(section_key, features):
         return []
 
     select_all_key = f"{section_key}_select_all"
-    if select_all_key not in st.session_state:
-        st.session_state[select_all_key] = False
+    current_all_selected = all(
+        st.session_state.get(f"{section_key}_feature_{index}", False) for index in range(len(features))
+    )
+    if st.session_state.get(select_all_key) != current_all_selected:
+        st.session_state[select_all_key] = current_all_selected
 
     st.checkbox(
         "全选功能",
@@ -690,14 +694,12 @@ def render_feature_selector(section_key, features):
         checked = st.checkbox(
             feature["name"],
             key=checkbox_key,
-            on_change=sync_select_all_state,
-            args=(section_key, features),
         )
         if checked:
             selected_features.append(feature)
 
-    sync_select_all_state(section_key, features)
     return selected_features
+
 
 
 def generate_suggestion(prompt_text, api_key, base_url, model):
