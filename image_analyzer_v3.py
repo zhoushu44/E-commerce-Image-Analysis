@@ -752,7 +752,8 @@ def build_mode3_suggestion_prompt(results, file_names):
 def get_cached_suggestion(cache_key, prompt_text, api_settings):
     if not prompt_text:
         return None
-    if st.session_state.get(cache_key, {}).get("prompt") != prompt_text:
+    cached = st.session_state.get(cache_key)
+    if not isinstance(cached, dict) or cached.get("prompt") != prompt_text:
         st.session_state[cache_key] = {
             "prompt": prompt_text,
             "value": generate_suggestion(
