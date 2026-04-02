@@ -1,5 +1,15 @@
 api_key: 96d739dd-5f53-4a6d-b89d-1779f27be846
 base_url: https://ark.cn-beijing.volces.com/api/coding/v3
-features: []
 model: ark-code-latest
+api_key_2: ''
+base_url_2: https://api.openai.com/v1
+model_2: gpt-4o
 suggestion_prompt: 根据数值给出图片优化建议
+multi_image_prompt: '请根据以下多张图片的分析数据，进行对比分析，给出专业的建议和优化方案：
+
+
+  '
+detail_page_prompt: '请根据以下主详情页与竞品详情页的分析数据，进行对比分析，给出专业的建议和优化方案：
+
+
+  '
