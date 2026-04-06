@@ -153,66 +153,249 @@ config = load_config()
 
 st.set_page_config(page_title="智能图片分析工具", page_icon="🖼️", layout="wide")
 
-mode_label = st.sidebar.selectbox("选择模式", list(MODE_OPTIONS.keys()))
-current_mode_key = MODE_OPTIONS[mode_label]
+current_mode_key = MODE_OPTIONS[st.session_state.get("mode_label", list(MODE_OPTIONS.keys())[0]) if st.session_state.get("mode_label") in MODE_OPTIONS else list(MODE_OPTIONS.keys())[0]]
 
 st.markdown(
     """
 <style>
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.4;
-    margin: 0 !important;
-    padding: 0 !important;
+:root {
+    color-scheme: light;
 }
 
-h1 {
-    color: #2c3e50 !important;
+html, body, [class*="css"] {
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(180deg, #f8f9fb 0%, #f3f5f7 100%);
+    color: #111827;
+}
+
+[data-testid="stHeader"] {
+    background: rgba(248, 249, 251, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+[data-testid="stMain"] {
+    width: 100%;
+}
+
+[data-testid="stMainBlockContainer"] {
+    width: 100%;
+    max-width: none;
+    padding-top: 1.4rem;
+    padding-bottom: 2rem;
+}
+
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+[data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) {
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+[data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"] {
+    min-width: 0;
+}
+
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"]:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+}
+
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"]:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"]:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+[data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) > [data-testid="stColumn"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+}
+
+[data-testid="stSidebar"] {
+    min-width: 280px;
+    width: clamp(280px, 24vw, 360px) !important;
+    background: #fbfbfb;
+    border-right: 1px solid #e8eaed;
+}
+
+[data-testid="stSidebarContent"] {
+    height: 100vh;
+    padding: 0.8rem 0.95rem 1.4rem;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #fcfcfc 0%, #f6f7f8 100%);
+}
+
+[data-testid="stSidebarUserContent"] {
+    padding-bottom: 1.5rem;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] details,
+[data-testid="stSidebar"] [data-testid="stTextInputRootElement"],
+[data-testid="stSidebar"] [data-baseweb="textarea"],
+[data-testid="stSidebar"] [data-baseweb="select"] > div,
+[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+    border-radius: 14px !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] details {
+    border: 1px solid #e8eaed;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] summary {
+    padding-top: 0.12rem;
+    padding-bottom: 0.12rem;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"],
+[data-baseweb="textarea"] {
+    border: 1px solid #e5e7eb !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: none !important;
+}
+
+[data-baseweb="select"] input,
+[data-baseweb="input"] input,
+[data-baseweb="textarea"] textarea {
+    font-size: 0.93rem !important;
+}
+
+[data-baseweb="input"] input:focus,
+[data-baseweb="textarea"] textarea:focus,
+[data-baseweb="select"] input:focus {
+    box-shadow: none !important;
+}
+
+.stButton > button,
+[data-testid="stDownloadButton"] > button {
+    min-height: 2.6rem;
+    border-radius: 12px !important;
+    border: 1px solid #111827 !important;
+    background: #111827 !important;
+    color: #ffffff !important;
+    font-size: 0.92rem !important;
     font-weight: 600 !important;
-    margin-bottom: 0.8rem !important;
-    margin-top: 0.2rem !important;
-    font-size: 24px !important;
-    padding-top: 0 !important;
+    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08) !important;
 }
 
-h2 {
-    color: #34495e !important;
-    font-size: 18px !important;
-    font-weight: 500 !important;
-    margin-bottom: 0.4rem !important;
-    margin-top: 0.6rem !important;
-    padding-bottom: 0.3rem !important;
-    border-bottom: none !important;
-}
-
-p, li {
-    font-size: 14px !important;
-}
-
-.stButton > button {
-    background-color: #3498db !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 4px !important;
-    padding: 4px 12px !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-    margin: 2px 0 !important;
-}
-
-.stButton > button:hover {
-    background-color: #2980b9 !important;
-    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3) !important;
+.stButton > button:hover,
+[data-testid="stDownloadButton"] > button:hover {
+    background: #1f2937 !important;
+    border-color: #1f2937 !important;
     transform: translateY(-1px) !important;
 }
 
+.stButton > button[kind="secondary"] {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #d8dde3 !important;
+    box-shadow: none !important;
+}
+
+.stButton > button[kind="secondary"]:hover {
+    background: #f8fafc !important;
+    border-color: #cfd6de !important;
+}
+
+h1,
+h2,
+h3 {
+    color: #111827 !important;
+    letter-spacing: -0.01em;
+}
+
+h1 {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.4rem !important;
+}
+
+h2 {
+    font-size: 1.08rem !important;
+    font-weight: 600 !important;
+    margin-top: 0.45rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+h3 {
+    font-size: 0.98rem !important;
+    font-weight: 600 !important;
+    margin-top: 0.35rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+p,
+li,
+label,
+[data-testid="stCaptionContainer"] {
+    font-size: 0.92rem !important;
+}
+
+[data-testid="stMetric"],
+[data-testid="stDataFrame"],
+[data-testid="stExpander"] details,
+[data-testid="stFileUploader"],
+[data-testid="stImage"],
+[data-testid="stAlertContainer"],
+[data-testid="stVerticalBlockBorderWrapper"] {
+    border-radius: 16px !important;
+}
+
+[data-testid="stFileUploader"] section,
+[data-testid="stDataFrame"],
+[data-testid="stAlertContainer"] {
+    border: 1px solid #e7eaee !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04) !important;
+}
+
+[data-testid="stImage"] img {
+    border-radius: 16px !important;
+}
+
+[data-testid="stAlertContainer"] {
+    padding: 0.2rem 0.35rem;
+}
+
+[data-testid="stMarkdownContainer"] code {
+    border-radius: 8px;
+    background: #f3f4f6;
+    padding: 0.12rem 0.35rem;
+}
+
+[data-testid="stCheckbox"] label {
+    padding-top: 0.12rem;
+    padding-bottom: 0.12rem;
+}
+
+.block-container .element-container {
+    margin-bottom: 0.35rem;
+}
+
 .scrollable {
-    max-height: 600px;
+    max-height: min(68vh, 720px);
     overflow-y: auto;
-    padding-right: 10px;
+    padding-right: 0.35rem;
 }
 
 .scrollable::-webkit-scrollbar {
@@ -220,17 +403,46 @@ p, li {
 }
 
 .scrollable::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
+    background: #eef0f2;
+    border-radius: 999px;
 }
 
 .scrollable::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
+    background: #c9ced6;
+    border-radius: 999px;
 }
 
 .scrollable::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+    background: #aeb6c1;
+}
+
+.app-footer {
+    margin-top: 1.2rem;
+    color: #6b7280;
+    text-align: center;
+    font-size: 0.88rem;
+}
+
+@media (max-width: 1200px) {
+    [data-testid="stSidebar"] {
+        min-width: 260px;
+        width: min(100vw, 300px) !important;
+    }
+
+    [data-testid="stMainBlockContainer"] {
+        width: 100%;
+        max-width: none;
+        padding-top: 1rem;
+    }
+
+    [data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMainBlockContainer"] {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    [data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][aria-expanded="false"]) [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(3)) {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 """,
@@ -563,6 +775,26 @@ def build_mode3_summary_rows(main_results, competitor_results, file_name_map):
     return rows
 
 
+def build_summary_table_rows(rows):
+    if not rows:
+        return rows
+
+    show_condition1 = any(row.get("条件1") != "无" for row in rows)
+    show_condition2 = any(row.get("条件2") != "无" for row in rows)
+
+    filtered_rows = []
+    for row in rows:
+        filtered_row = dict(row)
+        if not show_condition1:
+            filtered_row.pop("条件1", None)
+            filtered_row.pop("条件1结果", None)
+        if not show_condition2:
+            filtered_row.pop("条件2", None)
+            filtered_row.pop("条件2结果", None)
+        filtered_rows.append(filtered_row)
+    return filtered_rows
+
+
 def build_prompt_from_rows(base_prompt, rows, name_label, local_name_field=None):
     prompt = base_prompt
     for row in rows:
@@ -767,105 +999,106 @@ def get_cached_suggestion(cache_key, prompt_text, api_settings):
 
 
 with st.sidebar:
-    st.header("配置管理")
+    mode_label = st.selectbox("选择模式", list(MODE_OPTIONS.keys()), key="mode_label")
+    current_mode_key = MODE_OPTIONS[mode_label]
 
-    with st.expander("API 设置（模式1 / 模式2）"):
-        st.caption("模式1、模式2共用这套 API")
-        api_key = st.text_input("API Key", value=config.get("api_key", ""), type="password")
-        base_url = st.text_input("Base URL", value=config.get("base_url", "https://api.openai.com/v1"))
-        model = st.text_input("Model", value=config.get("model", "gpt-4o"))
+    with st.expander("配置管理", expanded=False):
+        with st.expander("API 设置（模式1 / 模式2）", expanded=False):
+            st.caption("模式1、模式2共用这套 API")
+            api_key = st.text_input("API Key", value=config.get("api_key", ""), type="password")
+            base_url = st.text_input("Base URL", value=config.get("base_url", "https://api.openai.com/v1"))
+            model = st.text_input("Model", value=config.get("model", "gpt-4o"))
 
-    with st.expander("API 设置（模式3）"):
-        st.caption("模式3单独使用这套 API")
-        api_key_2 = st.text_input("API Key 2", value=config.get("api_key_2", ""), type="password")
-        base_url_2 = st.text_input("Base URL 2", value=config.get("base_url_2", "https://api.openai.com/v1"))
-        model_2 = st.text_input("Model 2", value=config.get("model_2", "gpt-4o"))
+        with st.expander("API 设置（模式3）", expanded=False):
+            st.caption("模式3单独使用这套 API")
+            api_key_2 = st.text_input("API Key 2", value=config.get("api_key_2", ""), type="password")
+            base_url_2 = st.text_input("Base URL 2", value=config.get("base_url_2", "https://api.openai.com/v1"))
+            model_2 = st.text_input("Model 2", value=config.get("model_2", "gpt-4o"))
 
-    with st.expander("建议提示词设置"):
-        st.caption("这里是通用配置区，但分别对应模式1 / 模式2 / 模式3 的建议生成")
-        suggestion_prompt = st.text_area(
-            "单图建议提示词（模式1）",
-            value=config.get("suggestion_prompt", DEFAULT_CONFIG["suggestion_prompt"]),
-            height=100,
-        )
-        multi_image_prompt = st.text_area(
-            "多图对比提示词（模式2）",
-            value=config.get("multi_image_prompt", DEFAULT_CONFIG["multi_image_prompt"]),
-            height=100,
-        )
-        detail_page_prompt = st.text_area(
-            "详情页对比提示词（模式3）",
-            value=config.get("detail_page_prompt", DEFAULT_CONFIG["detail_page_prompt"]),
-            height=100,
-        )
+        with st.expander("建议提示词设置", expanded=False):
+            st.caption("这里是通用配置区，但分别对应模式1 / 模式2 / 模式3 的建议生成")
+            suggestion_prompt = st.text_area(
+                "单图建议提示词（模式1）",
+                value=config.get("suggestion_prompt", DEFAULT_CONFIG["suggestion_prompt"]),
+                height=100,
+            )
+            multi_image_prompt = st.text_area(
+                "多图对比提示词（模式2）",
+                value=config.get("multi_image_prompt", DEFAULT_CONFIG["multi_image_prompt"]),
+                height=100,
+            )
+            detail_page_prompt = st.text_area(
+                "详情页对比提示词（模式3）",
+                value=config.get("detail_page_prompt", DEFAULT_CONFIG["detail_page_prompt"]),
+                height=100,
+            )
 
-    with st.expander("配置导入导出"):
-        st.caption("导出或导入完整配置，包括 API 设置、建议提示词和 3 个模式的功能。")
-        feature_bundle_text = export_feature_bundle(config)
-        st.download_button(
-            "导出完整配置",
-            data=feature_bundle_text,
-            file_name="image_tool_config_bundle.yaml",
-            mime="text/yaml",
-            use_container_width=True,
-        )
-        imported_feature_file = st.file_uploader(
-            "导入配置文件",
-            type=["yaml", "yml"],
-            key="feature_bundle_import",
-        )
-        if st.button("导入完整配置", key="import_feature_bundle"):
-            if not imported_feature_file:
-                st.error("请先选择要导入的配置文件。")
-            else:
-                success, message = import_feature_bundle(imported_feature_file, config)
-                if success:
-                    st.success(message)
-                    st.rerun()
+        with st.expander("配置导入导出", expanded=False):
+            st.caption("导出或导入完整配置，包括 API 设置、建议提示词和 3 个模式的功能。")
+            feature_bundle_text = export_feature_bundle(config)
+            st.download_button(
+                "导出完整配置",
+                data=feature_bundle_text,
+                file_name="image_tool_config_bundle.yaml",
+                mime="text/yaml",
+                use_container_width=True,
+            )
+            imported_feature_file = st.file_uploader(
+                "导入配置文件",
+                type=["yaml", "yml"],
+                key="feature_bundle_import",
+            )
+            if st.button("导入完整配置", key="import_feature_bundle", use_container_width=True):
+                if not imported_feature_file:
+                    st.error("请先选择要导入的配置文件。")
                 else:
-                    st.error(message)
+                    success, message = import_feature_bundle(imported_feature_file, config)
+                    if success:
+                        st.success(message)
+                        st.rerun()
+                    else:
+                        st.error(message)
 
-    if st.button("保存配置"):
-        config["api_key"] = api_key
-        config["base_url"] = base_url
-        config["model"] = model
-        config["api_key_2"] = api_key_2
-        config["base_url_2"] = base_url_2
-        config["model_2"] = model_2
-        config["suggestion_prompt"] = suggestion_prompt
-        config["multi_image_prompt"] = multi_image_prompt
-        config["detail_page_prompt"] = detail_page_prompt
-        save_config(config)
-        st.success("配置保存成功！")
+        if st.button("保存配置", use_container_width=True):
+            config["api_key"] = api_key
+            config["base_url"] = base_url
+            config["model"] = model
+            config["api_key_2"] = api_key_2
+            config["base_url_2"] = base_url_2
+            config["model_2"] = model_2
+            config["suggestion_prompt"] = suggestion_prompt
+            config["multi_image_prompt"] = multi_image_prompt
+            config["detail_page_prompt"] = detail_page_prompt
+            save_config(config)
+            st.success("配置保存成功！")
 
     current_features = get_mode_features(current_mode_key)
     st.subheader(f"功能管理（{mode_label.split(':')[0]}）")
 
-    with st.expander("新增功能"):
+    with st.expander("新增功能", expanded=False):
         new_feature_name = st.text_input("功能名称", key=f"new_name_{current_mode_key}")
         new_feature_prompt = st.text_area("提示词", key=f"new_prompt_{current_mode_key}")
         new_feature_is_numeric = st.checkbox("是否返回数值", key=f"new_is_numeric_{current_mode_key}")
-        new_feature_condition = st.selectbox(
-            "条件1",
-            CONDITION_OPTIONS,
-            index=0,
-            disabled=not new_feature_is_numeric,
-            key=f"new_condition_{current_mode_key}",
-        )
-        new_feature_threshold = st.text_input(
-            "阈值1", disabled=not new_feature_is_numeric, key=f"new_threshold_{current_mode_key}"
-        )
-        new_feature_condition2 = st.selectbox(
-            "条件2",
-            CONDITION_OPTIONS,
-            index=0,
-            disabled=not new_feature_is_numeric,
-            key=f"new_condition2_{current_mode_key}",
-        )
-        new_feature_threshold2 = st.text_input(
-            "阈值2", disabled=not new_feature_is_numeric, key=f"new_threshold2_{current_mode_key}"
-        )
-        if st.button("添加功能", key=f"add_feature_{current_mode_key}"):
+        new_feature_condition = ""
+        new_feature_threshold = ""
+        new_feature_condition2 = ""
+        new_feature_threshold2 = ""
+        if new_feature_is_numeric:
+            new_feature_condition = st.selectbox(
+                "条件1",
+                CONDITION_OPTIONS,
+                index=0,
+                key=f"new_condition_{current_mode_key}",
+            )
+            new_feature_threshold = st.text_input("阈值1", key=f"new_threshold_{current_mode_key}")
+            new_feature_condition2 = st.selectbox(
+                "条件2",
+                CONDITION_OPTIONS,
+                index=0,
+                key=f"new_condition2_{current_mode_key}",
+            )
+            new_feature_threshold2 = st.text_input("阈值2", key=f"new_threshold2_{current_mode_key}")
+        if st.button("添加功能", key=f"add_feature_{current_mode_key}", use_container_width=True):
             if new_feature_name and new_feature_prompt:
                 current_features.append(
                     normalize_feature(
@@ -886,6 +1119,7 @@ with st.sidebar:
             else:
                 st.error("请填写功能名称和提示词。")
 
+
     st.subheader("现有功能")
     if not current_features:
         st.write("当前模式暂无功能")
@@ -899,39 +1133,40 @@ with st.sidebar:
                 value=feature.get("is_numeric", False),
                 key=f"is_numeric_{current_mode_key}_{index}",
             )
-            edited_condition = st.selectbox(
-                "条件1",
-                CONDITION_OPTIONS,
-                index=CONDITION_OPTIONS.index(feature.get("condition", ""))
-                if feature.get("condition", "") in CONDITION_OPTIONS
-                else 0,
-                disabled=not edited_is_numeric,
-                key=f"condition_{current_mode_key}_{index}",
-            )
-            edited_threshold = st.text_input(
-                "阈值1",
-                value=feature.get("threshold", ""),
-                disabled=not edited_is_numeric,
-                key=f"threshold_{current_mode_key}_{index}",
-            )
-            edited_condition2 = st.selectbox(
-                "条件2",
-                CONDITION_OPTIONS,
-                index=CONDITION_OPTIONS.index(feature.get("condition2", ""))
-                if feature.get("condition2", "") in CONDITION_OPTIONS
-                else 0,
-                disabled=not edited_is_numeric,
-                key=f"condition2_{current_mode_key}_{index}",
-            )
-            edited_threshold2 = st.text_input(
-                "阈值2",
-                value=feature.get("threshold2", ""),
-                disabled=not edited_is_numeric,
-                key=f"threshold2_{current_mode_key}_{index}",
-            )
+            edited_condition = feature.get("condition", "") if edited_is_numeric else ""
+            edited_threshold = feature.get("threshold", "") if edited_is_numeric else ""
+            edited_condition2 = feature.get("condition2", "") if edited_is_numeric else ""
+            edited_threshold2 = feature.get("threshold2", "") if edited_is_numeric else ""
+            if edited_is_numeric:
+                edited_condition = st.selectbox(
+                    "条件1",
+                    CONDITION_OPTIONS,
+                    index=CONDITION_OPTIONS.index(feature.get("condition", ""))
+                    if feature.get("condition", "") in CONDITION_OPTIONS
+                    else 0,
+                    key=f"condition_{current_mode_key}_{index}",
+                )
+                edited_threshold = st.text_input(
+                    "阈值1",
+                    value=feature.get("threshold", ""),
+                    key=f"threshold_{current_mode_key}_{index}",
+                )
+                edited_condition2 = st.selectbox(
+                    "条件2",
+                    CONDITION_OPTIONS,
+                    index=CONDITION_OPTIONS.index(feature.get("condition2", ""))
+                    if feature.get("condition2", "") in CONDITION_OPTIONS
+                    else 0,
+                    key=f"condition2_{current_mode_key}_{index}",
+                )
+                edited_threshold2 = st.text_input(
+                    "阈值2",
+                    value=feature.get("threshold2", ""),
+                    key=f"threshold2_{current_mode_key}_{index}",
+                )
             col_a, col_b = st.columns(2)
             with col_a:
-                if st.button("更新", key=f"update_{current_mode_key}_{index}"):
+                if st.button("更新", key=f"update_{current_mode_key}_{index}", use_container_width=True):
                     current_features[index] = normalize_feature(
                         {
                             "name": edited_name,
@@ -947,7 +1182,7 @@ with st.sidebar:
                     st.success("功能更新成功！")
                     st.rerun()
             with col_b:
-                if st.button("删除", key=f"delete_{current_mode_key}_{index}"):
+                if st.button("删除", key=f"delete_{current_mode_key}_{index}", use_container_width=True):
                     current_features.pop(index)
                     save_config(config)
                     st.success("功能删除成功！")
@@ -1018,7 +1253,7 @@ if mode_label == "模式1: 单图分析":
         rows = build_single_mode_summary_rows(st.session_state["analysis_results"])
         if rows:
             st.header("数据汇总")
-            st.dataframe(rows, use_container_width=True)
+            st.dataframe(build_summary_table_rows(rows), use_container_width=True)
 
 elif mode_label == "模式2: 多图对比分析":
     col1, col2, col3 = st.columns(3)
@@ -1123,7 +1358,7 @@ elif mode_label == "模式2: 多图对比分析":
         )
         if rows:
             st.header("数据汇总")
-            st.dataframe(rows, use_container_width=True)
+            st.dataframe(build_summary_table_rows(rows), use_container_width=True)
 
 else:
     col1, col2, col3 = st.columns(3)
@@ -1254,7 +1489,7 @@ else:
         )
         if rows:
             st.header("数据汇总")
-            st.dataframe(rows, use_container_width=True)
+            st.dataframe(build_summary_table_rows(rows), use_container_width=True)
 
 st.markdown("---")
-st.markdown("智能图片分析工具 - 基于大模型能力的插件化解决方案")
+st.markdown('<div class="app-footer">智能图片分析工具 · 极简工作台</div>', unsafe_allow_html=True)
