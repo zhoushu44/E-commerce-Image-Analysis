@@ -19,44 +19,7 @@ MODE_OPTIONS = {
     "模式3: 详情页分析": "mode3",
 }
 CONDITION_OPTIONS = ["", "大于", "小于", "等于", "大于等于", "小于等于"]
-DEFAULT_FEATURES = [
-    {
-        "name": "计算比例",
-        "prompt": "请分析这张图片的宽高比例，以最简分数形式表示（例如：4:3），并计算具体的宽高像素值。",
-        "is_numeric": False,
-        "condition": "",
-        "threshold": "",
-        "condition2": "",
-        "threshold2": "",
-    },
-    {
-        "name": "对比度分析",
-        "prompt": "请分析这张图片的对比度情况，评价其明暗对比是否适中，并给出专业的分析结果。",
-        "is_numeric": False,
-        "condition": "",
-        "threshold": "",
-        "condition2": "",
-        "threshold2": "",
-    },
-    {
-        "name": "内容描述",
-        "prompt": "请详细描述这张图片的内容，包括场景、主体、色彩、构图等方面。",
-        "is_numeric": False,
-        "condition": "",
-        "threshold": "",
-        "condition2": "",
-        "threshold2": "",
-    },
-    {
-        "name": "提取主色调",
-        "prompt": "请提取这张图片的主要颜色，以十六进制RGB值表示，并描述每种颜色的占比和视觉效果。",
-        "is_numeric": False,
-        "condition": "",
-        "threshold": "",
-        "condition2": "",
-        "threshold2": "",
-    },
-]
+DEFAULT_FEATURES = [{'name': '计算比例', 'prompt': '你正在执行“模式1：单图分析”的电商主图单图评估。请只围绕当前这一张图片本身分析，不要做多图对比、详情页对比或竞品判断。\n\n请完成以下内容：\n1. 输出图片宽度、高度、宽高比，并将宽高比化为最简比例。\n2. 判断它更接近哪类主图比例：1:1、4:3、3:4、16:9、9:16 或其他。\n3. 评估当前比例是否适合电商主图/搜索列表缩略图展示，重点说明移动端缩略图中主体是否容易被看清。\n4. 估算产品/主体在画面中的面积占比，给出区间判断：过小（<60%）、适中（60%-80%）、过大（>80%）。\n5. 检查是否存在边缘裁切、主体贴边、留白不足、画面过宽/过扁导致信息稀释等问题。\n6. 给出“比例与主体占比优化建议”，必须具体到可执行动作，例如裁成 1:1、扩大主体、增加边距、调整到中心或轻微水平偏移等。\n\n输出格式：\n- 基础尺寸：\n- 宽高比例：\n- 主体占比判断：\n- 缩略图适配：\n- 主要问题：\n- 优化建议：', 'is_numeric': False, 'condition': '', 'threshold': '', 'condition2': '', 'threshold2': ''}, {'name': '对比度分析', 'prompt': '你正在执行“模式1：单图分析”的电商主图单图评估。请只围绕当前这一张图片本身分析，不要做多图对比、详情页对比或竞品判断。\n\n请从电商主图点击率视角分析对比度与视觉显著性：\n1. 判断主体与背景之间的明暗对比、颜色对比、饱和度对比是否足够让主体快速跳出来。\n2. 按 1-5 级给出对比强度等级：1级几乎无对比，2级弱对比，3级达标，4级强对比，5级极强对比。\n3. 判断背景是否干净，是否存在复杂纹理、杂物、强色块、人物面部、过亮/过暗区域等分散注意力的干扰。\n4. 如果图片含文字，检查文字与背景的可读性、文字颜色对比、是否遮挡产品核心区域。\n5. 判断当前对比是否适合移动端小图浏览：用户 0.5-3 秒内能否识别主体和核心卖点。\n6. 给出可执行优化动作，例如加深/提亮背景、增加阴影或描边、降低背景复杂度、模糊背景、减少干扰元素、提升文字底色对比等。\n\n输出格式：\n- 对比强度等级：\n- 主体突出度：\n- 背景干扰：\n- 文字可读性：\n- 移动端识别风险：\n- 优化建议：', 'is_numeric': False, 'condition': '', 'threshold': '', 'condition2': '', 'threshold2': ''}, {'name': '内容描述', 'prompt': '你正在执行“模式1：单图分析”的电商主图单图评估。请只围绕当前这一张图片本身分析，不要做多图对比、详情页对比或竞品判断。\n\n请用“电商运营审核”的方式描述并诊断这张主图：\n1. 先说明图片中出现的主体产品、人物/模特、场景、文字、价格/促销/标签、品牌或信任元素。\n2. 判断用户 3 秒内能否回答四个问题：这是什么、有什么用、好在哪、为什么要点开。\n3. 梳理视觉层级：第一眼看到什么，第二眼看到什么，产品、文字、背景、装饰之间优先级是否正确。\n4. 分析构图方式：中心构图、三分法、黄金分割、对角线、负空间或其他；判断焦点是否集中。\n5. 如果有文字，评估是否一图一核心、是否信息过载、是否存在多卖点堆砌、是否遮挡主体。\n6. 评估信任感：清晰度、真实感、材质/细节呈现、过度修图、廉价感、违规/夸张表达风险。\n7. 最后给出“保留项”和“优先修改项”，修改项按影响点击率的优先级排序。\n\n输出格式：\n- 画面内容：\n- 3秒识别结论：\n- 视觉层级：\n- 构图与焦点：\n- 图文信息：\n- 信任感风险：\n- 保留项：\n- 优先修改项：', 'is_numeric': False, 'condition': '', 'threshold': '', 'condition2': '', 'threshold2': ''}, {'name': '提取主色调', 'prompt': '你正在执行“模式1：单图分析”的电商主图单图评估。请只围绕当前这一张图片本身分析，不要做多图对比、详情页对比或竞品判断。\n\n请分析这张主图的色彩策略：\n1. 提取 3-6 个主要颜色，尽量用十六进制 RGB 色值表示，并说明大致占比。\n2. 区分主体色、背景色、文字/标签色、强调色。\n3. 判断色彩是否服务于产品识别、情绪表达和点击吸引，而不是只评价“好不好看”。\n4. 检查是否存在颜色过多、饱和度过高、主体与背景融色、促销色抢主体、文字颜色不可读等问题。\n5. 评估色彩与电商主图场景的适配性：是否高级、可信、干净、醒目，是否适合缩略图。\n6. 给出可执行配色建议，包括建议保留的颜色、需要弱化的颜色、背景替换方向、文字/标签颜色建议。\n\n输出格式：\n- 主色调列表：\n- 色彩角色分工：\n- 色彩对比与识别：\n- 情绪与品类适配：\n- 色彩问题：\n- 配色优化建议：', 'is_numeric': False, 'condition': '', 'threshold': '', 'condition2': '', 'threshold2': ''}]
 
 
 def normalize_feature(feature):
@@ -939,7 +902,7 @@ def generate_suggestion(prompt_text, api_key, base_url, model):
     response = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt_text}],
-        max_tokens=1000,
+        max_tokens=4000,
     )
     return response.choices[0].message.content
 
@@ -948,11 +911,14 @@ def build_mode1_suggestion_prompt(results):
     rows = build_single_mode_summary_rows(results)
     if not rows:
         return None
-    return build_prompt_from_rows(
-        config.get("suggestion_prompt", DEFAULT_CONFIG["suggestion_prompt"]),
-        rows,
-        "功能名称",
-    )
+    prompt = config.get("suggestion_prompt", DEFAULT_CONFIG["suggestion_prompt"])
+    for row in rows:
+        prompt += f"- {row['功能名称']}: {row['分析结果']}\n"
+        if row["条件1"] != "无":
+            prompt += f"  条件1: {row['条件1']}, 结果: {row['条件1结果']}\n"
+        if row["条件2"] != "无":
+            prompt += f"  条件2: {row['条件2']}, 结果: {row['条件2结果']}\n"
+    return prompt
 
 
 def build_mode2_suggestion_prompt(results, image_names):
