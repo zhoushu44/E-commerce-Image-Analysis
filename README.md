@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ### 2. 运行应用
 
 ```bash
-streamlit run image_analyzer.py
+streamlit run image_analyzer_v3.py
 ```
 
 ### 3. 配置 API

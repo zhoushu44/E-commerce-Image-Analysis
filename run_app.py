@@ -1,4 +1,3 @@
-import os
 import subprocess
 import webbrowser
 import time
@@ -61,7 +60,6 @@ start_time = time.time()
 max_wait_time = 10  # 最多等待10秒
 
 try:
-    # 等待服务启动
     time.sleep(3)  # 等待3秒让服务启动
     
     # 检查服务是否启动成功
